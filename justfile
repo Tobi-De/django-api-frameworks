@@ -20,9 +20,13 @@ up *ARGS='':
   just build {{ ARGS }}
   docker-compose up -d {{ ARGS }}
 
+# Start Django container
+django:
+  docker-compose up -d django
+
 # Start Django DRF container
-django-drf:
-  docker-compose up -d django-drf
+djangorestframework:
+  docker-compose up -d djangorestframework
 
 # Start Django Ninja container
 django-ninja:
@@ -47,10 +51,6 @@ djrest2:
 # Start Django Shinobi container
 django-shinobi:
   docker-compose up -d django-shinobi
-
-# Start Fast DRF container
-fast-drf:
-  docker-compose up -d fast-drf
 
 # Stop and remove Docker containers
 down:
@@ -80,9 +80,9 @@ populate:
 test *ARGS='':
   docker exec -it django uv run pytest
   docker exec -it django-rapid uv run pytest
-  docker exec -it django-bolt uv run pytest
   docker exec -it djangorestframework uv run pytest
   docker exec -it djrest2 uv run pytest
+  # docker exec -it django-bolt uv run pytest
   cd load-testing && uv run pytest {{ ARGS }}
 
 # Run benchmarks
