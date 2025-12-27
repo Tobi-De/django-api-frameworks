@@ -1,43 +1,49 @@
 # API framework serialization performance
 
+> This is a fork of https://github.com/oscarychen/building-efficient-api which adds additional Django API frameworks for comparison.
+
 ## Introduction
+
 This project is to compare the performance of serialization between different API frameworks. 
-The frameworks that are compared are:
-- Django REST Framework
-- Django Ninja
-- FastAPI with Pydantic
-- Golang with sqlc
 
-Most of these are Python framworks, except Golang with sqlc. 
-Using Golang with sqlc is a relatively barebones approach to building an API, it does not involve an ORM, 
-and database records are serialized into native Go structs. 
-It is expected to be fast, 
-but I want to see just how close we can get to it from any of the Python frameworks listed above.
+### Frameworks
 
-Django REST Framework is a heavy weight full-featured framework, there is a ton of tuning that could be done to it,
-I wrote a step-by-step changes I have done to the Django REST Framework and Django Ninja examples to make them faster 
-in the [related documentation](docs/readme.md).
+- [Django](https://www.djangoproject.com)
+- [Django REST Framework (DRF)](https://www.django-rest-framework.org)
+- [Django Ninja](https://django-ninja.dev)
+- [Django Shinobi](https://pmdevita.github.io/django-shinobi/)
+- [Django Rapid](https://github.com/FarhanAliRaza/django-rapid)
+- [Django Bolt](https://github.com/FarhanAliRaza/django-bolt)
+- [Djrest2](https://gitlab.levitnet.be/levit/djrest)
+- [FastAPI](https://fastapi.tiangolo.com/) (not included in benchmarks by default)
 
 ## Methodology
-A postgres database is used to store the data and shared between all the frameworks.
-The database is dockerized, as well as each of the frameworks.
-A dockerized Locust API load testing tool is also included to run the tests.
-To ensure similar resource is available to each docker container during the tests, each Locust test is run sequentially,
-so when one framework is handling a request, the others are idle.
+
+Each API framework is in its own Docker container, along with a shared PostgreSQL database which is used to store the sample data.
+
+A Locust API load testing tool is also included to run the tests. To ensure similar resource is available to each docker container during the tests, each Locust test is run sequentially, so when one framework is handling a request, the others are idle.
 
 ## Quick Start
-A set of makefile commands are provided:
-```bash
-make docker-build           // build the docker images
-make docker-up              // start the docker containers
-make django-drf-migrate     // using the Django REST Framework container to run set up database schema
-make django-drf-populate    // using the Django REST Framework container to populate the database with 100k records
-make docker-down            // stop the docker containers
-```
-Locust testing interface will be available on http://localhost:8089
 
-I also included an api.http file so you can manually test the API client that is part of the JetBrains IDEs, 
-or if you are using VS Code, the HttpYAC extension can be used.
+A set of `just` commands are provided:
 
-## Results
+1. Install [`just`](https://just.systems/man/en/packages.html)
+2. `just up`: builds and starts all Docker containers
+3. `just populate`: populates the database with sample data
+4. `just test-all`: validates all APIs are returning the same data and benchmarks them
+
+Locust testing interface will be available at http://localhost:8089.
+
 ![](assets/locust_api_response_times.png)
+
+### Validation Tests
+
+```bash
+just test
+```
+
+### Benchmarks
+
+```bash
+just benchmark
+```

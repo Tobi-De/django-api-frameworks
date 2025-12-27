@@ -1,0 +1,115 @@
+import json
+from typing import Any
+
+import pytest
+import requests
+
+"""
+Ports to project mapping:
+
+8000 - djangorestframework
+8001 - django-ninja
+8002 - fastapi
+8003 - 
+8004 - django-rapid
+8005 - django-bolt
+8006 - djrest2
+8007 - django-shinobi
+8008 - 
+8009 - django
+"""
+
+# API configurations for different implementations
+API_CONFIGS = {
+    "django": {
+        "base_url": "http://localhost:8009",
+        "endpoints": [
+            "/api/cars/sync/",
+            "/api/cars/async/",
+            "/api/cars/streaming/",
+            "/api/cars/asyncpg/",
+        ],
+    },
+    "djangorestframework": {
+        "base_url": "http://localhost:8000",
+        "endpoints": [
+            "/api/cars-serialized/",
+            "/api/cars-orjson/",
+            "/api/cars-dict-orjson/",
+        ],
+    },
+    "django-ninja": {
+        "base_url": "http://localhost:8001",
+        "endpoints": [
+            "/api/cars/sync-with-schema/",
+            "/api/cars/sync-without-schema/",
+            "/api/cars/async-with-schema/",
+            "/api/cars/async-without-schema/",
+        ],
+    },
+    "django-shinobi": {
+        "base_url": "http://localhost:8007",
+        "endpoints": [
+            "/api/cars/sync-with-schema/",
+            "/api/cars/sync-without-schema/",
+            "/api/cars/async-with-schema/",
+            "/api/cars/async-without-schema/",
+        ],
+    },
+    "django-rapid": {
+        "base_url": "http://localhost:8004",
+        "endpoints": [
+            "/api/cars/",
+        ],
+    },
+    "django-bolt": {
+        "base_url": "http://localhost:8005",
+        "endpoints": [
+            "/api/cars-serialized/",
+            "/api/cars-dicts/",
+        ],
+    },
+    "djrest2": {
+        "base_url": "http://localhost:8006",
+        "endpoints": [
+            "/api/cars/",
+        ],
+    },
+    # "fastapi": {
+    #     "base_url": "http://localhost:8002",
+    #     "endpoints": ["/api/cars/"]
+    # },
+}
+
+FIELDS = [
+    "id",
+    "vin",
+    "owner",
+    "created_at",
+    "updated_at",
+    "car_model_id",
+    "car_model_name",
+    "car_model_year",
+    "color",
+]
+
+
+def fetch_api_data(service: str, endpoint: str) -> list[dict[str, Any]]:
+    """
+    Fetch data from a specific API endpoint.
+    """
+    config = API_CONFIGS[service]
+    url = f"{config['base_url']}{endpoint}"
+
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+
+        data = response.json()
+        assert "results" in data, f"Expected 'results' key in response from {url}"
+
+        return data["results"]
+    except requests.exceptions.RequestException as e:
+        pytest.fail(f"Failed to fetch data from {url}: {e}")
+    except json.JSONDecodeError as e:
+        pytest.fail(f"Invalid JSON response from {url}: {e}")

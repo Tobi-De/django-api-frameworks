@@ -1,0 +1,25 @@
+[project]
+name = "api-demo-djrest2"
+version = "0.1.0"
+requires-python = "==3.13.*"
+dependencies = [
+    "faker==39.0.0",
+    "uvicorn[standard]",
+    "Django==6.0",
+    "orjson==3.11.5",
+    "psycopg[binary]==3.3.2",
+    # library under test
+    "djrest2==0.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-django>=4.11.1",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+
+[tool.uv]
+package = false

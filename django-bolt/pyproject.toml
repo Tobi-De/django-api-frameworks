@@ -1,0 +1,17 @@
+[project]
+name = "api-demo-django-bolt"
+version = "0.1.0"
+dependencies = [
+    "faker==39.0.0",
+    "uvicorn[standard]",
+    "Django==6.0",
+    "orjson==3.11.5",
+    "psycopg[binary]==3.3.2",
+    # library under test
+    "django-bolt==0.4.7",
+    "msgspec==0.20.0",
+]
+requires-python = ">=3.14"
+
+[tool.uv]
+package = false

@@ -40,13 +40,13 @@ To get started, I've included some basic docker configuration for Django develop
 In typical Django REST framework toy example fashion, we set up a ModelSerializer and API View as such:
 
 ```python
-# django_drf/car_registry/serializers.py
+# django_drf/car/serializers.py
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = '__all__'
 
-# django_drf/car_registry/views.py
+# django_drf/car/views.py
 class CarListView(ListAPIView):
     serializer_class = CarSerializer
     queryset = Car.objects.all()
@@ -73,7 +73,7 @@ Now, we can hit this endpoint (you can use the api.http file provided in the rep
 Next, we are going to want to return some additional data for each of the Car record retrieved while maintaining the response data structure, particular the related CarModel's attributes `name`, `year`, and `color`. Most Django developers would simply make the following changes to the serializer:
 
 ```python
-# django_drf/car_registry/serializers.py
+# django_drf/car/serializers.py
 class CarSerializerWithRelatedModel(serializers.ModelSerializer):
     car_model_id = serializers.IntegerField(source='model_id', read_only=True)
     car_model_name = serializers.CharField(source='model.name', read_only=True)
@@ -100,7 +100,7 @@ In Django REST Framework, this can be a very easy mistake to make (simply by mod
 Based on the previous example, we are going to modify the query by "prefetching" the related records:
 
 ```python
-# django_drf/car_registry/views.py
+# django_drf/car/views.py
 class CarListViewWithModelPrefetched(ListAPIView):
     serializer_class = CarSerializerWithRelatedModel
     queryset = Car.objects.all().select_related('model')  # or .prefetch_related('model')
@@ -392,7 +392,7 @@ The way sqlc works is that you write a SQL query in a .sql file, and sqlc genera
 
 To make things easier to set up, I'm going to "re-engineer" the Django models and put them into Go. Django has a command that allows you to see the SQL query generated for a migration:
 ```bash
-docker exec -it api-demo-django-drf python manage.py sqlmigrate car_registry 0001 
+docker exec -it api-demo-django-drf python manage.py sqlmigrate car 0001 
 ```
 And we copy the SQL query into `go_sqlc_mux/schemas/0001_initial.up.sql`.
 
@@ -401,7 +401,7 @@ This file is essentially a migration step that would be used to make changes to 
 Similarly, we can steal the SQL query Django used by our previous CarService method `retrieve_all_cars_annotated`, you can simply put a breakpoint or print statement
 after each query to see what SQL Django generated, ie: `print(str(qs.query))`.
 
-We would put such query into `go_sqlc_mux/sqlc/queries/car_registry.sql`.
+We would put such query into `go_sqlc_mux/sqlc/queries/car.sql`.
 
 Next, we run `sqlc generate` to generate the go Repository code. These code will be in the `go_sqlc_mux/internal/repository/` folder. 
 Inside of this folder you will see that sqlc has created database models `CarRegistryCar` and `CarRegistryCarmodel` as Go structs, that are akin to models we had set up in Django previously.

@@ -1,0 +1,17 @@
+[project]
+name = "api-demo-locust"
+version = "0.1.0"
+requires-python = "==3.13.*"
+dependencies = [
+    "locust",
+    "pytest",
+    "pytest-benchmark>=5.2.3",
+    "requests",
+]
+
+[tool.pytest]
+testpaths = ["tests"]
+addopts = ["--benchmark-skip"]
+
+[tool.uv]
+package = false

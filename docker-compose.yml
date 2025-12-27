@@ -1,17 +1,15 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:16.1-alpine
-    container_name: "api-demo-db"
+    container_name: db
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=api_demo_db
+      - POSTGRES_DB=django-api-frameworks
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     networks:
-      - api_demo_app
+      - django-api-frameworks
     volumes:
       - database_postgres:/var/lib/postgresql/data
     healthcheck:
@@ -20,67 +18,157 @@ services:
       timeout: 5s
       retries: 5
 
-  django-drf:
+  djangorestframework:
+    container_name: djangorestframework
     build:
       context: .
-      dockerfile: ./django_drf/Dockerfile
-    container_name: "api-demo-django-drf"
+      dockerfile: ./djangorestframework/Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./djangorestframework:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
     networks:
-      - api_demo_app
+      - django-api-frameworks
 
   django-ninja:
+    container_name: django-ninja
     build:
       context: .
-      dockerfile: ./django_ninja/Dockerfile
-    container_name: "api-demo-django-ninja"
+      dockerfile: ./django-ninja/Dockerfile
     ports:
-      - "8001:8001"
+      - "8001:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./django-ninja:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
     networks:
-      - api_demo_app
+      - django-api-frameworks
 
   fastapi:
+    container_name: fastapi
     build:
       context: .
-      dockerfile: ./fast_api/Dockerfile
-    container_name: "api-demo-fastapi"
+      dockerfile: ./fastapi/Dockerfile
     ports:
-      - "8002:8002"
+      - "8002:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./fastapi:/app
+    command: uv run fastapi dev main.py --host 0.0.0.0 --port 8000
     depends_on:
       - db
     networks:
-      - api_demo_app
+      - django-api-frameworks
 
-  go-sqlc-mux:
+  django-rapid:
+    container_name: django-rapid
     build:
       context: .
-      dockerfile: ./go_sqlc_mux/Dockerfile
-    container_name: "api-demo-go-sqlc-mux"
+      dockerfile: ./django-rapid/Dockerfile
     ports:
-      - "8003:8003"
+      - "8004:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./django-rapid:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
     networks:
-      - api_demo_app
+      - django-api-frameworks
+
+  django-bolt:
+    container_name: django-bolt
+    build:
+      context: .
+      dockerfile: ./django-bolt/Dockerfile
+    ports:
+      - "8005:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./django-bolt:/app
+    command: uv run python manage.py runbolt --host 0.0.0.0 --port 8000
+    depends_on:
+      - db
+    networks:
+      - django-api-frameworks
+
+  djrest2:
+    container_name: djrest2
+    build:
+      context: .
+      dockerfile: ./djrest2/Dockerfile
+    ports:
+      - "8006:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./djrest2:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+    networks:
+      - django-api-frameworks
+
+  django-shinobi:
+    container_name: django-shinobi
+    build:
+      context: .
+      dockerfile: ./django-shinobi/Dockerfile
+    ports:
+      - "8007:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./django-shinobi:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+    networks:
+      - django-api-frameworks
+  
+  django:
+    container_name: django
+    build:
+      context: ./django
+      dockerfile: ./Dockerfile
+    ports:
+      - "8009:8000"
+    environment:
+      - DEBUG=False
+    volumes:
+      - ./django:/app
+    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+    networks:
+      - django-api-frameworks
 
   locust:
+    container_name: locust
     build:
         context: .
-        dockerfile: ./load_testing/Dockerfile
-    container_name: "api-demo-locust"
+        dockerfile: ./load-testing/Dockerfile
     ports:
       - "8089:8089"
+    volumes:
+      - ./load-testing:/usr/src/app
     networks:
-        - api_demo_app
+        - django-api-frameworks
 
 volumes:
   database_postgres:
 
 networks:
-  api_demo_app:
+  django-api-frameworks:
     driver: bridge
