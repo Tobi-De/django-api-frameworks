@@ -167,6 +167,18 @@ class ApiLoadTest(FastHttpUser):
         with task_lock:
             self.client.get("http://djrest2:8000/api/cars-orjson/")
 
+    @tag("djrest2")
+    @task(1)
+    def test_djrest2_api_cars_model_to_dict(self):
+        with task_lock:
+            self.client.get("http://djrest2:8000/api/cars-model-to-dict/")
+
+    @tag("djrest2")
+    @task(1)
+    def test_djrest2_api_cars_qs_to_dict(self):
+        with task_lock:
+            self.client.get("http://djrest2:8000/api/cars-queryset-as-dict/")
+
     # fastapi
     @tag("fastapi")
     @task(1)

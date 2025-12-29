@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Add more approaches for `djrest2`.
+
 ## 0.3.0
 
 - Add more tests.
