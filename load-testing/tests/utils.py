@@ -77,7 +77,7 @@ API_CONFIGS = {
         "endpoints": [
             "/api/cars-json/",
             "/api/cars-orjson/",
-            "/api/cars-model-to-dict/",
+            # "/api/cars-model-to-dict/",
             "/api/cars-queryset-as-dicts/",
         ],
     },
