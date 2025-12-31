@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Rename example folders.
+- Add migration for `django-example`.
+
 ## 0.4.0
 
 - Add more approaches for `djrest2`.
