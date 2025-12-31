@@ -38,11 +38,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install Python dependencies
-COPY ./django-bolt/pyproject.toml /app/
+COPY ./django-bolt-example/pyproject.toml /app/
 RUN uv lock && uv sync --frozen --no-dev
 
 # Copy application code
-COPY ./django-bolt/ .
+COPY ./django-bolt-example/ .
 
 # Run the application
 CMD ["uv", "run", "python", "manage.py", "runbolt", "--host", "0.0.0.0", "--port", "8000"]

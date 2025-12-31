@@ -21,15 +21,15 @@ services:
   django:
     container_name: django
     build:
-      context: ./django
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./django-example/Dockerfile
     ports:
       - "8001:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./django:/app
-    command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
+      - ./django-example:/app
+    command: bash ./wait_for_db.sh uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
     networks:
@@ -39,13 +39,13 @@ services:
     container_name: django-ninja
     build:
       context: .
-      dockerfile: ./django-ninja/Dockerfile
+      dockerfile: ./django-ninja-example/Dockerfile
     ports:
       - "8002:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./django-ninja:/app
+      - ./django-ninja-example:/app
     command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
@@ -56,13 +56,13 @@ services:
     container_name: django-shinobi
     build:
       context: .
-      dockerfile: ./django-shinobi/Dockerfile
+      dockerfile: ./django-shinobi-example/Dockerfile
     ports:
       - "8003:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./django-shinobi:/app
+      - ./django-shinobi-example:/app
     command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
@@ -73,13 +73,13 @@ services:
     container_name: django-rapid
     build:
       context: .
-      dockerfile: ./django-rapid/Dockerfile
+      dockerfile: ./django-rapid-example/Dockerfile
     ports:
       - "8004:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./django-rapid:/app
+      - ./django-rapid-example:/app
     command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
@@ -90,13 +90,13 @@ services:
     container_name: django-bolt
     build:
       context: .
-      dockerfile: ./django-bolt/Dockerfile
+      dockerfile: ./django-bolt-example/Dockerfile
     ports:
       - "8005:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./django-bolt:/app
+      - ./django-bolt-example:/app
     command: uv run python manage.py runbolt --host 0.0.0.0 --port 8000
     depends_on:
       - db
@@ -107,13 +107,13 @@ services:
     container_name: djangorestframework
     build:
       context: .
-      dockerfile: ./djangorestframework/Dockerfile
+      dockerfile: ./djangorestframework-example/Dockerfile
     ports:
       - "8006:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./djangorestframework:/app
+      - ./djangorestframework-example:/app
     command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
@@ -124,13 +124,13 @@ services:
     container_name: djrest2
     build:
       context: .
-      dockerfile: ./djrest2/Dockerfile
+      dockerfile: ./djrest2-example/Dockerfile
     ports:
       - "8007:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./djrest2:/app
+      - ./djrest2-example:/app
     command: uv run uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
@@ -141,13 +141,13 @@ services:
     container_name: fastapi
     build:
       context: .
-      dockerfile: ./fastapi/Dockerfile
+      dockerfile: ./fastapi-example/Dockerfile
     ports:
       - "8099:8000"
     environment:
       - DEBUG=False
     volumes:
-      - ./fastapi:/app
+      - ./fastapi-example:/app
     command: uv run fastapi dev main.py --host 0.0.0.0 --port 8000
     depends_on:
       - db
@@ -157,14 +157,14 @@ services:
   locust:
     container_name: locust
     build:
-        context: .
-        dockerfile: ./load-testing/Dockerfile
+      context: .
+      dockerfile: ./load-testing/Dockerfile
     ports:
       - "8089:8089"
     volumes:
       - ./load-testing:/usr/src/app
     networks:
-        - django-api-frameworks
+      - django-api-frameworks
 
 volumes:
   database_postgres:

@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y \
 
 FROM django AS final
 
-COPY ./djrest2/pyproject.toml /app/
+COPY ./djangorestframework-example/pyproject.toml /app/
 
 RUN uv lock && uv sync --frozen --no-dev
 
-COPY ./djrest2/ .
+COPY ./djangorestframework-example/ .
 
 CMD ["uv", "run", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000"]

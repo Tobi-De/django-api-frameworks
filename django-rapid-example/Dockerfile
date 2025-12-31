@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y \
 
 FROM django AS final
 
-COPY ./django-ninja/pyproject.toml /app/
+COPY ./django-rapid-example/pyproject.toml /app/
 
 RUN uv lock && uv sync --frozen --no-dev
 
-COPY ./django-ninja/ .
+COPY ./django-rapid-example/ .
 
 CMD ["uv", "run", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000"]

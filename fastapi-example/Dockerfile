@@ -5,7 +5,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-FROM base-uv AS django
+FROM base-uv AS fastapi-base
 
 WORKDIR /app
 
@@ -14,12 +14,12 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-FROM django AS final
+FROM fastapi-base AS final
 
-COPY ./django-rapid/pyproject.toml /app/
+COPY ./fastapi-example/pyproject.toml /app/
 
 RUN uv lock && uv sync --frozen --no-dev
 
-COPY ./django-rapid/ .
+COPY ./fastapi-example/ .
 
-CMD ["uv", "run", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "fastapi", "run", "main.py", "--port", "8002"]
